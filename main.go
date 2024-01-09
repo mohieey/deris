@@ -59,29 +59,6 @@ func main() {
 		writer.Write(result)
 	}
 
-	// input := "$5\r\nAhmed\r\n"
-
-	// reader := bufio.NewReader(strings.NewReader(input))
-	// b, _ := reader.ReadByte()
-
-	// if b != '$' {
-	// 	fmt.Println("Invalid type, expecting bulk strings only")
-	// 	os.Exit(1)
-	// }
-
-	// size, _ := reader.ReadByte()
-
-	// strSize, _ := strconv.Atoi(string(size))
-
-	// // consume /r/n
-	// reader.ReadByte()
-	// reader.ReadByte()
-
-	// name := make([]byte, strSize)
-	// reader.Read(name)
-
-	// fmt.Println(string(name))
-
 }
 
 func printVal(v *Value) {
