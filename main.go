@@ -34,7 +34,8 @@ func main() {
 
 		printVal(&val)
 
-		conn.Write([]byte("+OK\r\n"))
+		writer := NewWriter(conn)
+		writer.Write(Value{typ: STRING_TYPE, str: "OK"})
 	}
 
 	// input := "$5\r\nAhmed\r\n"
