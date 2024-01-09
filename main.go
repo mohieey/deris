@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strings"
 )
 
 const PORT = ":6379"
@@ -22,6 +23,7 @@ func main() {
 		return
 	}
 	defer conn.Close()
+	writer := NewWriter(conn)
 
 	for {
 		resp := NewResp(conn)
@@ -32,10 +34,29 @@ func main() {
 			return
 		}
 
+		if val.typ != ARRAY_TYPE {
+			writer.Write(Value{typ: STRING_TYPE, str: "ivalid request, expected an array"})
+			continue
+		}
+
+		if len(val.array) == 0 {
+			writer.Write(Value{typ: STRING_TYPE, str: "ivalid request, expected a non empty array"})
+			continue
+		}
+
+		command := strings.ToLower(val.array[0].bulk)
+		args := val.array[1:]
+
+		handler, ok := Handlers[command]
+		if !ok {
+			writer.Write(Value{typ: BULK_TYPE, bulk: fmt.Sprintf("Invalid command: %s", command)})
+			continue
+		}
+
 		printVal(&val)
 
-		writer := NewWriter(conn)
-		writer.Write(Value{typ: STRING_TYPE, str: "OK"})
+		result := handler(args)
+		writer.Write(result)
 	}
 
 	// input := "$5\r\nAhmed\r\n"
