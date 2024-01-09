@@ -1,6 +1,10 @@
 package main
 
 import (
+	"deris/aof"
+	"deris/handlers"
+	"deris/resp"
+	"deris/supportedtypes"
 	"fmt"
 	"log"
 	"net"
@@ -17,18 +21,18 @@ func main() {
 	}
 	log.Println("deris is listening on:", PORT)
 
-	aof, err := NewAof("db.aof")
+	aof, err := aof.NewAof("db.aof")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	defer aof.Close()
 
-	aof.Read(func(value Value) {
-		command := strings.ToLower(value.array[0].bulk)
-		args := value.array[1:]
+	aof.Read(func(value resp.Value) {
+		command := strings.ToLower(value.Array[0].Bulk)
+		args := value.Array[1:]
 
-		handler, ok := Handlers[command]
+		handler, ok := handlers.Handlers[command]
 		if !ok {
 			fmt.Println("Invalid command:", command)
 			return
@@ -43,37 +47,37 @@ func main() {
 		return
 	}
 	defer conn.Close()
-	writer := NewWriter(conn)
+	writer := resp.NewWriter(conn)
 
 	for {
-		resp := NewResp(conn)
+		respDeserializer := resp.NewRespDeserializer(conn)
 
-		val, err := resp.Read()
+		val, err := respDeserializer.Read()
 		if err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		if val.typ != ARRAY_TYPE {
-			writer.Write(Value{typ: STRING_TYPE, str: "ivalid request, expected an array"})
+		if val.Typ != supportedtypes.ARRAY_TYPE {
+			writer.Write(resp.Value{Typ: supportedtypes.STRING_TYPE, Str: "ivalid request, expected an array"})
 			continue
 		}
 
-		if len(val.array) == 0 {
-			writer.Write(Value{typ: STRING_TYPE, str: "ivalid request, expected a non empty array"})
+		if len(val.Array) == 0 {
+			writer.Write(resp.Value{Typ: supportedtypes.STRING_TYPE, Str: "ivalid request, expected a non empty array"})
 			continue
 		}
 
-		command := strings.ToLower(val.array[0].bulk)
-		args := val.array[1:]
+		command := strings.ToLower(val.Array[0].Bulk)
+		args := val.Array[1:]
 
-		handler, ok := Handlers[command]
+		handler, ok := handlers.Handlers[command]
 		if !ok {
-			writer.Write(Value{typ: BULK_TYPE, bulk: fmt.Sprintf("Invalid command: %s", command)})
+			writer.Write(resp.Value{Typ: supportedtypes.BULK_TYPE, Bulk: fmt.Sprintf("Invalid command: %s", command)})
 			continue
 		}
 
-		if command == SET_CMD || command == HSET_CMD {
+		if command == handlers.SET_CMD || command == handlers.HSET_CMD {
 			aof.Write(val)
 		}
 
@@ -85,13 +89,13 @@ func main() {
 
 }
 
-func printVal(v *Value) {
+func printVal(v *resp.Value) {
 	fmt.Println("================================")
-	fmt.Println("type", v.typ)
-	fmt.Println("string", v.str)
-	fmt.Println("number", v.num)
-	fmt.Println("bulk", v.bulk)
-	fmt.Println("array", v.array)
-	fmt.Println("array len", len(v.array))
+	fmt.Println("type", v.Typ)
+	fmt.Println("string", v.Str)
+	fmt.Println("number", v.Num)
+	fmt.Println("Bulk", v.Bulk)
+	fmt.Println("array", v.Array)
+	fmt.Println("array len", len(v.Array))
 	fmt.Println("================================")
 }

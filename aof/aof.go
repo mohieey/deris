@@ -1,7 +1,8 @@
-package main
+package aof
 
 import (
 	"bufio"
+	"deris/resp"
 	"io"
 	"os"
 	"sync"
@@ -47,16 +48,16 @@ func (aof *Aof) Close() error {
 	return aof.file.Close()
 }
 
-func (aof *Aof) Read(fn func(value Value)) error {
+func (aof *Aof) Read(fn func(value resp.Value)) error {
 	aof.mu.Lock()
 	defer aof.mu.Unlock()
 
 	aof.file.Seek(0, io.SeekStart)
 
-	reader := NewResp(aof.file)
+	respDeserializer := resp.NewRespDeserializer(aof.file)
 
 	for {
-		value, err := reader.Read()
+		value, err := respDeserializer.Read()
 		if err != nil {
 			if err == io.EOF {
 				break
@@ -71,7 +72,7 @@ func (aof *Aof) Read(fn func(value Value)) error {
 	return nil
 }
 
-func (aof *Aof) Write(value Value) error {
+func (aof *Aof) Write(value resp.Value) error {
 	aof.mu.Lock()
 	defer aof.mu.Unlock()
 
