@@ -17,6 +17,26 @@ func main() {
 	}
 	log.Println("deris is listening on:", PORT)
 
+	aof, err := NewAof("db.aof")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer aof.Close()
+
+	aof.Read(func(value Value) {
+		command := strings.ToLower(value.array[0].bulk)
+		args := value.array[1:]
+
+		handler, ok := Handlers[command]
+		if !ok {
+			fmt.Println("Invalid command:", command)
+			return
+		}
+
+		handler(args)
+	})
+
 	conn, err := l.Accept()
 	if err != nil {
 		fmt.Println(err)
@@ -51,6 +71,10 @@ func main() {
 		if !ok {
 			writer.Write(Value{typ: BULK_TYPE, bulk: fmt.Sprintf("Invalid command: %s", command)})
 			continue
+		}
+
+		if command == SET_CMD || command == HSET_CMD {
+			aof.Write(val)
 		}
 
 		printVal(&val)
