@@ -1,6 +1,6 @@
 package handlers
 
-import "deris/resp"
+import "godis/resp"
 
 var Handlers = map[string]func([]resp.Value) resp.Value{
 	PING_CMD:    ping,

@@ -1,6 +1,6 @@
-# deris
+# godis
 
-**deris** is a Redis-like server implemented in Go, supporting popular Redis commands such as `SET`, `GET`, `HSET`, `HGET`, `HGETALL`, and `PING`. It can be accessed using any Redis-compatible client.
+**godis** is a Redis-like server implemented in Go, supporting popular Redis commands such as `SET`, `GET`, `HSET`, `HGET`, `HGETALL`, and `PING`. It can be accessed using any Redis-compatible client.
 
 ## Features
 
@@ -21,22 +21,22 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/mohieey/deris.git
+git clone https://github.com/mohieey/godis.git
 
 # Navigate to the project directory
-cd deris
+cd godis
 
 # Build the project
 go build .
 
 # Run!
-./deris
+./godis
 ```
 
 # Example using Redis CLI
 
 ```bash
-redis-cli set mykey "Hello, deris!"
+redis-cli set mykey "Hello, godis!"
 
 redis-cli get mykey
 ```

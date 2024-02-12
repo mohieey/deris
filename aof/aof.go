@@ -2,7 +2,7 @@ package aof
 
 import (
 	"bufio"
-	"deris/resp"
+	"godis/resp"
 	"io"
 	"os"
 	"sync"

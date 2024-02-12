@@ -1,11 +1,11 @@
 package main
 
 import (
-	"deris/aof"
-	"deris/handlers"
-	"deris/resp"
-	"deris/supportedtypes"
 	"fmt"
+	"godis/aof"
+	"godis/handlers"
+	"godis/resp"
+	"godis/supportedtypes"
 	"log"
 	"net"
 	"strings"
@@ -19,7 +19,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	log.Println("deris is listening on:", PORT)
+	log.Println("godis is listening on:", PORT)
 
 	aof, err := aof.NewAof("db.aof")
 	if err != nil {

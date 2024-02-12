@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"deris/resp"
-	"deris/supportedtypes"
+	"godis/resp"
+	"godis/supportedtypes"
 )
 
 const GET_CMD = "get"

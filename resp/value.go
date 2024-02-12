@@ -1,7 +1,7 @@
 package resp
 
 import (
-	"deris/supportedtypes"
+	"godis/supportedtypes"
 	"strconv"
 )
 

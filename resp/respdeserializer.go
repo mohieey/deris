@@ -2,8 +2,8 @@ package resp
 
 import (
 	"bufio"
-	"deris/supportedtypes"
 	"fmt"
+	"godis/supportedtypes"
 	"io"
 	"strconv"
 )
